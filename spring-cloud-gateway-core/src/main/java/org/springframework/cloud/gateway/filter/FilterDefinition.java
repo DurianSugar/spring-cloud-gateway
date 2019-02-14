@@ -30,11 +30,24 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
  * @author Spencer Gibb
+ * filter的定义类
  */
 @Validated
 public class FilterDefinition {
+
+	//filter名字
 	@NotNull
 	private String name;
+	/**
+	 * 一个键值对参数用于构造filter对象
+	 * filters:
+	 * - AddRequestHeader=X-Request-Foo,Bar
+	 * 以上配置文件中的内容就会解析成 AddRequestHeader为name属性,spring cloud是以约定大于配置的,通常寻找filter的时候会以name属性为前缀,GatewayFilterFactory为后缀,
+	 * 即AddRequestHeaderGatewayFilterFactory类
+	 *
+	 * X-Request-Foo,Bar会被解析成args属性,并分为两对键值对,key是固定字符串_genkey_+数组元素下标,value为元素本身,即{(_genkey_0,X-Request_Foo),(_genkey_1,Bar)}
+	 *
+	 */
 	private Map<String, String> args = new LinkedHashMap<>();
 
 	public FilterDefinition() {

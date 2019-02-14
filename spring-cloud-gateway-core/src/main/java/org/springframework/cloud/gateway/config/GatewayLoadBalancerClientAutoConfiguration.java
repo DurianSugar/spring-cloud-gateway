@@ -32,6 +32,8 @@ import org.springframework.web.reactive.DispatcherHandler;
 
 /**
  * @author Spencer Gibb
+ *
+ * LoadBalancerClientFilter的初始化配置
  */
 @Configuration
 @ConditionalOnClass({LoadBalancerClient.class, RibbonAutoConfiguration.class, DispatcherHandler.class})

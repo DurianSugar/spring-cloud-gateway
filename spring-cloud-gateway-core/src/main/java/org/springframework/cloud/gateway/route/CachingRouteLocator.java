@@ -30,10 +30,12 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 /**
  * @author Spencer Gibb
+ * 缓存路由的 RouteLocator 实现类。RoutePredicateHandlerMapping 调用 CachingRouteLocator 的 RouteLocator#getRoutes() 方法，获取路由。
  */
 public class CachingRouteLocator implements RouteLocator, ApplicationListener<RefreshRoutesEvent> {
 
 	private final RouteLocator delegate;
+	//路由缓存
 	private final Flux<Route> routes;
 	private final Map<String, List> cache = new HashMap<>();
 
@@ -62,6 +64,9 @@ public class CachingRouteLocator implements RouteLocator, ApplicationListener<Re
 		refresh();
 	}
 
+	/**
+	 * 监听 {@link RefreshRoutesEvent} 事件，刷新缓存
+	 */
 	@Deprecated
 	/* for testing */ void handleRefresh() {
 		refresh();

@@ -21,10 +21,21 @@ import reactor.core.publisher.Mono;
 
 /**
  * @author Spencer Gibb
+ * 路由配置写入接口,改接口定义了保存与删除的两个方法
  */
 public interface RouteDefinitionWriter {
 
+	/**
+	 * 保存路由配置
+	 * @param route 路由配置
+	 * @return
+	 */
 	Mono<Void> save(Mono<RouteDefinition> route);
 
+	/**
+	 * 删除路由配置
+	 * @param routeId 路由编号
+	 * @return
+	 */
 	Mono<Void> delete(Mono<String> routeId);
 }

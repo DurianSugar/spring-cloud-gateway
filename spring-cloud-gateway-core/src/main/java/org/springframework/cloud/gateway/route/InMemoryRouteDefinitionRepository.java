@@ -29,9 +29,15 @@ import reactor.core.publisher.Mono;
 
 /**
  * @author Spencer Gibb
+ * 该实现类的save和delete方法在{@link org.springframework.cloud.gateway.actuate.GatewayControllerEndpoint}中有端点提供出来可以使用
+ * {@link InMemoryRouteDefinitionRepository#getRouteDefinitions()} 方法的调用时在{@link CompositeRouteDefinitionLocator}中
  */
 public class InMemoryRouteDefinitionRepository implements RouteDefinitionRepository {
 
+	/**
+	 * 路由配置映射
+	 * key : 路由编号 {@link RouteDefinition#id}
+	 */
 	private final Map<String, RouteDefinition> routes = synchronizedMap(new LinkedHashMap<String, RouteDefinition>());
 
 	@Override

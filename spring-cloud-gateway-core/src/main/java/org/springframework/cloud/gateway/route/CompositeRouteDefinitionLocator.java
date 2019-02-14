@@ -21,6 +21,8 @@ import reactor.core.publisher.Flux;
 
 /**
  * @author Spencer Gibb
+ * 组合多种{@link RouteDefinitionLocator}的实现,默认分别从{@link org.springframework.cloud.gateway.config.PropertiesRouteDefinitionLocator}
+ * {@link RouteDefinitionRepository}和{@link org.springframework.cloud.gateway.discovery.DiscoveryClientRouteDefinitionLocator}中读取路由配置
  */
 public class CompositeRouteDefinitionLocator implements RouteDefinitionLocator {
 

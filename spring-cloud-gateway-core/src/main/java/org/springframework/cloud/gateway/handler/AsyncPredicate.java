@@ -26,9 +26,12 @@ import reactor.core.publisher.Mono;
 
 /**
  * @author Ben Hale
+ *
+ * Predicate即为Route中定义部分,用于条件匹配
  */
 public interface AsyncPredicate<T> extends Function<T, Publisher<Boolean>> {
 
+	//与操作,即两个Predicate组成一个,需要同时满足
 	default AsyncPredicate<T> and(AsyncPredicate<? super T> other) {
 		Objects.requireNonNull(other, "other must not be null");
 
@@ -36,10 +39,12 @@ public interface AsyncPredicate<T> extends Function<T, Publisher<Boolean>> {
 				.map(tuple -> tuple.getT1() && tuple.getT2());
 	}
 
+	//取反操作,即对Predicate匹配结果取反
 	default AsyncPredicate<T> negate() {
 		return t -> Mono.from(apply(t)).map(b -> !b);
 	}
 
+	//或操作,即两个Predicate组成一个,只需要满足一个
 	default AsyncPredicate<T> or(AsyncPredicate<? super T> other) {
 		Objects.requireNonNull(other, "other must not be null");
 

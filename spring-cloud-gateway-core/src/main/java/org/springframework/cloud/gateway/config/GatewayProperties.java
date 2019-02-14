@@ -34,6 +34,9 @@ import org.springframework.validation.annotation.Validated;
 
 /**
  * @author Spencer Gibb
+ * 从配置文件中读取:1.路由配置
+ * 				  2.默认过滤器配置,当RouteDefinition转换成Route的时候,会将默认的过滤器配置加到每个route中
+ * 				  只需要在配置文件中命名默认配置与下面的defaultFilters一致即可,作者默认使用"-"分割也是可以的
  */
 @ConfigurationProperties("spring.cloud.gateway")
 @Validated

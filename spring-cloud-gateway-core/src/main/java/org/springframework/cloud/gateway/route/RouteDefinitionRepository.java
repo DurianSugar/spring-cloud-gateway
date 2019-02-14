@@ -19,6 +19,9 @@ package org.springframework.cloud.gateway.route;
 
 /**
  * @author Spencer Gibb
+ * 该接口同时继承了{@link RouteDefinitionLocator}和{@link RouteDefinitionWriter}
+ * 只要实现该接口即可实现从存储器(例如,内存/redis/mysql等)读取,保存,删除路由配置
+ * 目前gateway版本只实现了基于内存存储器的 {@link InMemoryRouteDefinitionRepository}
  */
 public interface RouteDefinitionRepository extends RouteDefinitionLocator, RouteDefinitionWriter {
 }

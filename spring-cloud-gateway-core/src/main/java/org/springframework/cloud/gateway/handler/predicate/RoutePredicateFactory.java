@@ -30,9 +30,12 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.t
 
 /**
  * @author Spencer Gibb
+ * 是所有Predicate Factroy的顶级接口,用于生产Predicate
  */
+//函数式接口,只允许有一个未实现的抽象方法
 @FunctionalInterface
-public interface RoutePredicateFactory<C> extends ShortcutConfigurable, Configurable<C> {
+public interface RoutePredicateFactory<C> extends ShortcutConfigurable
+		, Configurable<C> {//扩展Configurable接口,从接口命名上可以看出Predicate工厂是支持配置的,同时所有的PredicateFactroy都实现了该接口
 	String PATTERN_KEY = "pattern";
 
 	// useful for javadsl
@@ -50,10 +53,13 @@ public interface RoutePredicateFactory<C> extends ShortcutConfigurable, Configur
 		return applyAsync(config);
 	}
 
+	//获取配置类的类型,支持泛型,具体的config类型由子类指定
+	@Override
 	default Class<C> getConfigClass() {
 		throw new UnsupportedOperationException("getConfigClass() not implemented");
 	}
 
+	//创建一个config实例,由具体的实现类来完成
 	@Override
 	default C newConfig() {
 		throw new UnsupportedOperationException("newConfig() not implemented");
@@ -61,8 +67,10 @@ public interface RoutePredicateFactory<C> extends ShortcutConfigurable, Configur
 
 	default void beforeApply(C config) {}
 
+	//核心方法，即函数接口的唯一抽象方法，用于生产 Predicate，接收一个范型参数 config
 	Predicate<ServerWebExchange> apply(C config);
 
+	//对参数 config 应用工厂方法，并将返回结果 Predicate 包装成 AsyncPredicate。包装成 AsyncPredicate 是为了使用非阻塞模型
 	default AsyncPredicate<ServerWebExchange> applyAsync(C config) {
 		return toAsyncPredicate(apply(config));
 	}

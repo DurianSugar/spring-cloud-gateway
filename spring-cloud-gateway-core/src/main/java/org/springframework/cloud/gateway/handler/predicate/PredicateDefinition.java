@@ -31,6 +31,7 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
  * @author Spencer Gibb
+ * 实现和FilterDefinition类似
  */
 @Validated
 public class PredicateDefinition {

@@ -17,6 +17,10 @@
 
 package org.springframework.cloud.gateway.support;
 
+/**
+ * 可以将该接口理解为只要实现了这个接口的都是可在配置文件中配置的
+ * @param <C>
+ */
 public interface Configurable<C> {
 	Class<C> getConfigClass();
 	C newConfig();

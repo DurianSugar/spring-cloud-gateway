@@ -27,6 +27,8 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 
 /**
  * @author Spencer Gibb
+ *
+ * 生产GateWayFilter
  */
 @FunctionalInterface
 public interface GatewayFilterFactory<C> extends ShortcutConfigurable, Configurable<C> {
