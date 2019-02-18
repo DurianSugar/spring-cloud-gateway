@@ -34,6 +34,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 /**
  * @author Spencer Gibb
+ * Route 匹配 ：请求 Host 匹配指定值。
  */
 public class HostRoutePredicateFactory extends AbstractRoutePredicateFactory<HostRoutePredicateFactory.Config> {
 

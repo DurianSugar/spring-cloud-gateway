@@ -29,6 +29,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 /**
  * @author Spencer Gibb
+ * Route 匹配 ：请求 QueryParam 匹配指定值。
  */
 public class QueryRoutePredicateFactory extends AbstractRoutePredicateFactory<QueryRoutePredicateFactory.Config> {
 

@@ -28,6 +28,7 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.a
 
 /**
  * @author Spencer Gibb
+ * 根据配置的正则表达式regexp,使用配置的replacement重写请求path
  */
 public class RewritePathGatewayFilterFactory extends AbstractGatewayFilterFactory<RewritePathGatewayFilterFactory.Config> {
 
@@ -45,19 +46,22 @@ public class RewritePathGatewayFilterFactory extends AbstractGatewayFilterFactor
 
 	@Override
 	public GatewayFilter apply(Config config) {
+		//用"$\"替代"$",避免和yaml语法冲突
 		String replacement = config.replacement.replace("$\\", "$");
 		return (exchange, chain) -> {
 			ServerHttpRequest req = exchange.getRequest();
+			//添加原始请求URI到GATEWAY_ORIGINAL_REQUEST_URL_ATTR
 			addOriginalRequestUrl(exchange, req.getURI());
+			//重写Path
 			String path = req.getURI().getRawPath();
 			String newPath = path.replaceAll(config.regexp, replacement);
-
+			//创建新的ServerHttpRequest
 			ServerHttpRequest request = req.mutate()
-					.path(newPath)
+					.path(newPath)//设置Path
 					.build();
-
+			//添加请求URI到GATEWAY_REQUEST_URL_ATTR
 			exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, request.getURI());
-
+			//创建新的 ServerWebExchange ，提交过滤器链继续过滤
 			return chain.filter(exchange.mutate().request(request).build());
 		};
 	}

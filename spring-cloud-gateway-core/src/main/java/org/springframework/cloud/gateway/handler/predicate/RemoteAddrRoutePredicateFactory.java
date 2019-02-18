@@ -38,6 +38,7 @@ import static org.springframework.cloud.gateway.support.ShortcutConfigurable.Sho
 
 /**
  * @author Spencer Gibb
+ * Route 匹配 ：请求来源 IP 在指定范围内。
  */
 public class RemoteAddrRoutePredicateFactory extends AbstractRoutePredicateFactory<RemoteAddrRoutePredicateFactory.Config> {
 

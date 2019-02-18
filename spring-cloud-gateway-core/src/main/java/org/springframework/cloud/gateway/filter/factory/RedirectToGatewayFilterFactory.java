@@ -55,8 +55,10 @@ public class RedirectToGatewayFilterFactory extends AbstractGatewayFilterFactory
 	}
 
 	public GatewayFilter apply(String statusString, String urlString) {
+		//解析status,并判断是否是3XX重定向状态
 		HttpStatusHolder httpStatus = HttpStatusHolder.parse(statusString);
 		Assert.isTrue(httpStatus.is3xxRedirection(), "status must be a 3xx code, but was " + statusString);
+		//创建URL
 		final URI url = URI.create(urlString);
 		return apply(httpStatus, url);
 	}
@@ -67,16 +69,20 @@ public class RedirectToGatewayFilterFactory extends AbstractGatewayFilterFactory
 
 	public GatewayFilter apply(HttpStatusHolder httpStatus, URI uri) {
 		return (exchange, chain) ->
-			chain.filter(exchange).then(Mono.defer(() -> {
-				if (!exchange.getResponse().isCommitted()) {
-					setResponseStatus(exchange, httpStatus);
-
-					final ServerHttpResponse response = exchange.getResponse();
-					response.getHeaders().set(HttpHeaders.LOCATION, uri.toString());
-					return response.setComplete();
-				}
-				return Mono.empty();
-			}));
+				//调用 #then(Mono) 方法，实现 After Filter 逻辑。这里和 AddRequestHeaderGatewayFilterFactory 实现的 Before Filter 【方式】不同。
+				chain.filter(exchange).then(Mono.defer(() -> {
+					//若响应为提交,设置响应的状态码和Header之后再返回
+					if (!exchange.getResponse().isCommitted()) {
+						//设置响应Status
+						setResponseStatus(exchange, httpStatus);
+						//设置响应Header
+						final ServerHttpResponse response = exchange.getResponse();
+						response.getHeaders().set(HttpHeaders.LOCATION, uri.toString());
+						return response.setComplete();
+					}
+					//响应已提交
+					return Mono.empty();
+				}));
 	}
 
 	public static class Config {

@@ -36,6 +36,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * @author Spencer Gibb
+ *
+ * 根据匹配的 Route ，计算请求的地址。注意，这里的地址指的是 URL ，而不是 URI 。
  */
 public class RouteToRequestUrlFilter implements GlobalFilter, Ordered {
 
@@ -52,11 +54,13 @@ public class RouteToRequestUrlFilter implements GlobalFilter, Ordered {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+		//获得Route
 		Route route = exchange.getAttribute(GATEWAY_ROUTE_ATTR);
 		if (route == null) {
 			return chain.filter(exchange);
 		}
 		log.trace("RouteToRequestUrlFilter start");
+		//拼接requestUrl
 		URI uri = exchange.getRequest().getURI();
 		boolean encoded = containsEncodedParts(uri);
 		URI routeUri = route.getUri();
@@ -81,7 +85,9 @@ public class RouteToRequestUrlFilter implements GlobalFilter, Ordered {
 				.port(routeUri.getPort())
 				.build(encoded)
 				.toUri();
+		// 设置 requestUrl 到 GATEWAY_REQUEST_URL_ATTR {@link RewritePathGatewayFilterFactory}
 		exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, mergedUrl);
+		// 提交过滤器链继续过滤
 		return chain.filter(exchange);
 	}
 

@@ -20,6 +20,7 @@ package org.springframework.cloud.gateway.sample;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.cloud.gateway.route.Route;
 import reactor.core.publisher.Mono;
 
 import org.springframework.beans.factory.annotation.Value;

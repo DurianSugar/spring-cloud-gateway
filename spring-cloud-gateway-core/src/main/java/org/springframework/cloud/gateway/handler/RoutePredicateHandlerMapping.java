@@ -51,18 +51,26 @@ public class RoutePredicateHandlerMapping extends AbstractHandlerMapping {
 		} else {
 			managmentPort = null;
 		}
+		//调用 #setOrder(1) 的原因，Spring Cloud Gateway 的 GatewayWebfluxEndpoint 提供 HTTP API ，不需要经过网关，它通过 RequestMappingHandlerMapping 进行请求匹配处理。
+		// RequestMappingHandlerMapping 的 order = 0 ，需要排在 RoutePredicateHandlerMapping 前面。所有，RoutePredicateHandlerMapping 设置 order = 1
 		setOrder(1);		
 		setCorsConfigurations(globalCorsProperties.getCorsConfigurations());
 	}
 
+	/**
+	 * {@link #getHandlerInternal(ServerWebExchange)}方法,在{@link org.springframework.web.reactive.DispatcherHandler#handle(ServerWebExchange)}方法中67行被调用
+	 * 匹配Route,并返回处理Route的FilteringWebHandler
+	 */
 	@Override
 	protected Mono<?> getHandlerInternal(ServerWebExchange exchange) {
 		// don't handle requests on the management port if set
 		if (managmentPort != null && exchange.getRequest().getURI().getPort() == managmentPort.intValue()) {
 			return Mono.empty();
 		}
+		// 设置GATEWAY_HANDLER_MAPPER_ATTR为RoutePredicateHandlerMapping
 		exchange.getAttributes().put(GATEWAY_HANDLER_MAPPER_ATTR, getSimpleName());
 
+		// 调用lookupRoute方法,匹配Route
 		return lookupRoute(exchange)
 				// .log("route-predicate-handler-mapping", Level.FINER) //name this
 				.flatMap((Function<Route, Mono<?>>) r -> {
@@ -70,9 +78,13 @@ public class RoutePredicateHandlerMapping extends AbstractHandlerMapping {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Mapping [" + getExchangeDesc(exchange) + "] to " + r);
 					}
-
+					// 设置GATEWAY_ROUTE_ATTR为匹配的Route
 					exchange.getAttributes().put(GATEWAY_ROUTE_ATTR, r);
+					//返回FilteringWebHandler
 					return Mono.just(webHandler);
+
+				//匹配不到 Route ，返回 Mono.empty() ，即不返回处理器。这样会不会有问题？不会，在 DispatcherHandler#handle(ServerWebExchange) 方法
+				// 我们可以看到，当没有合适的 Handler ，返回 Mono.error(No matching handler)
 				}).switchIfEmpty(Mono.empty().then(Mono.fromRunnable(() -> {
 					exchange.getAttributes().remove(GATEWAY_PREDICATE_ROUTE_ATTR);
 					if (logger.isTraceEnabled()) {
@@ -100,9 +112,15 @@ public class RoutePredicateHandlerMapping extends AbstractHandlerMapping {
 		return out.toString();
 	}
 
+	/**
+	 * 顺序匹配Route
+	 */
 	protected Mono<Route> lookupRoute(ServerWebExchange exchange) {
-		return this.routeLocator
-				.getRoutes()
+
+		/**
+		 * 调用{@link RouteLocator#getRoutes()}方法,获取全部的Route,调用{@link AsyncPredicate#apply(Object)} 方法,顺序匹配一个Route
+		 */
+		return this.routeLocator.getRoutes()
 				//individually filter routes so that filterWhen error delaying is not a problem
 				.concatMap(route -> Mono
 						.just(route)

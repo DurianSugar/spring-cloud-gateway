@@ -28,6 +28,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * @author Spencer Gibb
+ * Route 匹配: 请求时间满足在配置时间之后
  */
 public class AfterRoutePredicateFactory extends AbstractRoutePredicateFactory<AfterRoutePredicateFactory.Config> {
 
@@ -46,12 +47,16 @@ public class AfterRoutePredicateFactory extends AbstractRoutePredicateFactory<Af
 	@Override
 	public Predicate<ServerWebExchange> apply(Config config) {
 		ZonedDateTime datetime = config.getDatetime();
+		// 通过 Lambda 表达式调用
+		// Lambda 表达式实际上是一个对象。
+		// 我们可以将 Lambda 表达式赋值给一个变量，就可像其它对象一样调用。
+		// 这里实际上只是在这个方法体重重写了接口,并没有实际调用
+		// 这里的return出来的对象,上一个方法接受到这个对象之后即可使用该重写的方法
 		return exchange -> {
 			final ZonedDateTime now = ZonedDateTime.now();
 			return now.isAfter(datetime);
 		};
 	}
-
 
 	public static class Config {
 		@NotNull

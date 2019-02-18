@@ -29,6 +29,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 /**
  * @author Spencer Gibb
+ * Route 匹配:请求指定Cookie正则匹配指定值
  */
 public class CookieRoutePredicateFactory extends AbstractRoutePredicateFactory<CookieRoutePredicateFactory.Config> {
 

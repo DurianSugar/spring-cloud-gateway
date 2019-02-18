@@ -26,6 +26,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 /**
  * @author Spencer Gibb
+ * Route 匹配 ：请求时间满足在配置时间之前。
  */
 public class BeforeRoutePredicateFactory extends AbstractRoutePredicateFactory<BeforeRoutePredicateFactory.Config> {
 
@@ -48,6 +49,7 @@ public class BeforeRoutePredicateFactory extends AbstractRoutePredicateFactory<B
 			return now.isBefore(datetime);
 		};
 	}
+
 
 	public static class Config {
 		private ZonedDateTime datetime;

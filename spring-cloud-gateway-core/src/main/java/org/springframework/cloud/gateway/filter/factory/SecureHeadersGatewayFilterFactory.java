@@ -23,6 +23,7 @@ import org.springframework.http.HttpHeaders;
 /**
  * https://blog.appcanary.com/2017/http-security-headers.html
  * @author Spencer Gibb
+ * 添加响应Secure相关的Header,默认值在{@link SecureHeadersProperties} , 可以通过 spring.cloud.gateway.filter.secure-headers 在配置文件中配置
  */
 public class SecureHeadersGatewayFilterFactory extends AbstractGatewayFilterFactory {
 

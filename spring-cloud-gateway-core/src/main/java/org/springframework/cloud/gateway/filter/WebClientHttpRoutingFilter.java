@@ -39,7 +39,9 @@ import reactor.core.publisher.Mono;
 
 /**
  * @author Spencer Gibb
+ * 实现和{@link NettyRoutingFilter} 一样,为什么要再实现一次呢
  */
+// TODO 重复实现
 public class WebClientHttpRoutingFilter implements GlobalFilter, Ordered {
 
 	private final WebClient webClient;

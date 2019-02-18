@@ -57,6 +57,8 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.s
 /**
  * @author Spencer Gibb
  * @author Biju Kunjummen
+ * Netty路由网关过滤器,根据http://或者https://前缀过滤处理,使用基于Netty实现的HttpClient请求后端Http服务
+ * {@link NettyRoutingFilter} 和 {@link NettyWriteResponseFilter}成对使用的网关过滤器,其将NettyRoutingFilter请求后端Http服务的响应写回客户端
  */
 public class NettyRoutingFilter implements GlobalFilter, Ordered {
 
@@ -79,19 +81,24 @@ public class NettyRoutingFilter implements GlobalFilter, Ordered {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+		// 获得requestUrl
 		URI requestUrl = exchange.getRequiredAttribute(GATEWAY_REQUEST_URL_ATTR);
 
+		// 判断是否能够处理,1.该请求暂未被其他Routing网关处理,2.前缀是否正确
 		String scheme = requestUrl.getScheme();
 		if (isAlreadyRouted(exchange) || (!"http".equals(scheme) && !"https".equals(scheme))) {
 			return chain.filter(exchange);
 		}
+		// 设置该路由为已处理
 		setAlreadyRouted(exchange);
 
 		ServerHttpRequest request = exchange.getRequest();
 
+		// 创建请求方法对象,Request Method
 		final HttpMethod method = HttpMethod.valueOf(request.getMethodValue());
 		final String url = requestUrl.toString();
 
+		// 创建请求头,RequestHeader
 		HttpHeaders filtered = filterRequest(this.headersFilters.getIfAvailable(),
 				exchange);
 

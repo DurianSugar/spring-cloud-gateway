@@ -64,3 +64,4 @@ public interface GatewayFilterFactory<C> extends ShortcutConfigurable, Configura
 		return request.mutate();
 	}
 }
+

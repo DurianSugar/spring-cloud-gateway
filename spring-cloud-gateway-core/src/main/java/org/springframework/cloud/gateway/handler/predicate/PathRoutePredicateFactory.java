@@ -40,6 +40,7 @@ import static org.springframework.http.server.PathContainer.parsePath;
 
 /**
  * @author Spencer Gibb
+ * Route 匹配 ：请求 Path 匹配指定值。
  */
 public class PathRoutePredicateFactory extends AbstractRoutePredicateFactory<PathRoutePredicateFactory.Config> {
 	private static final Log log = LogFactory.getLog(RoutePredicateFactory.class);

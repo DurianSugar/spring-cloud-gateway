@@ -27,18 +27,30 @@ import reactor.core.publisher.Mono;
  * be used to implement cross-cutting, application-agnostic requirements such
  * as security, timeouts, and others.
  *
+ * GlobalFilter的顺序如下:
+ * {@link NettyWriteResponseFilter}		-1
+ * {@link WebClientWriteResponseFilter}	-1
+ * {@link RouteToRequestUrlFilter}		10000
+ * {@link LoadBalancerClientFilter}		10100
+ * {@link ForwardRoutingFilter}			Integer.MAX_VALUE
+ * {@link NettyRoutingFilter}			Integer.MAX_VALUE
+ * {@link WebClientHttpRoutingFilter}			Integer.MAX_VALUE
+ * {@link WebsocketRoutingFilter}			Integer.MAX_VALUE
  * @author Rossen Stoyanchev
  * @since 5.0
  */
+
 public interface GlobalFilter {
 
 	/**
 	 * Process the Web request and (optionally) delegate to the next
 	 * {@code WebFilter} through the given {@link GatewayFilterChain}.
+	 *
 	 * @param exchange the current server exchange
-	 * @param chain provides a way to delegate to the next filter
+	 * @param chain    provides a way to delegate to the next filter
 	 * @return {@code Mono<Void>} to indicate when request processing is complete
 	 */
 	Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain);
+
 
 }

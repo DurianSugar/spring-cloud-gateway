@@ -50,7 +50,6 @@ public class PrefixPathGatewayFilterFactory extends AbstractGatewayFilterFactory
 	@Override
 	public GatewayFilter apply(Config config) {
 		return (exchange, chain) -> {
-
 			boolean alreadyPrefixed = exchange.getAttributeOrDefault(GATEWAY_ALREADY_PREFIXED_ATTR, false);
 			if (alreadyPrefixed) {
 				return chain.filter(exchange);

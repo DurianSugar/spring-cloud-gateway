@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 
 /**
  * Contract to allow a {@link WebFilter} to delegate to the next in the chain.
- *
+ *	网关过滤器链接口
  * @author Rossen Stoyanchev
  * @since 5.0
  */
